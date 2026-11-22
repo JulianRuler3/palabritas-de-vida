@@ -1,0 +1,224 @@
+/* ---------- Tokens ---------- */
+:root {
+  /* Claro: mañana de Pentecostés — marfil, tinta tostada, oro y bermellón */
+  --paper: oklch(96.5% 0.018 80);
+  --paper-2: oklch(98.5% 0.01 85);
+  --ink: oklch(25% 0.03 45);
+  --ink-2: oklch(40% 0.03 50);
+  --muted: oklch(52% 0.03 60);
+  --rule: oklch(86% 0.03 75);
+  --accent: oklch(58% 0.19 35);       /* bermellón */
+  --accent-2: oklch(52% 0.19 32);
+  --accent-ink: oklch(98% 0.01 85);
+  --gold: oklch(80% 0.13 82);
+  --flame-out: oklch(66% 0.2 38);
+  --flame-in: oklch(86% 0.14 85);
+  --glow: oklch(88% 0.1 85 / 0.55);
+  --ray: oklch(90% 0.09 85 / 0.38);
+  --mote: oklch(78% 0.12 80);
+  --wind: oklch(70% 0.06 70 / 0.5);
+  --shadow: 0 30px 60px -30px oklch(45% 0.08 60 / 0.35);
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius: 28px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Oscuro: noche serena — azul profundo, luz dorada que desciende */
+    --paper: oklch(15% 0.035 262);
+    --paper-2: oklch(19% 0.035 262);
+    --ink: oklch(95% 0.015 85);
+    --ink-2: oklch(86% 0.02 85);
+    --muted: oklch(74% 0.03 255);
+    --rule: oklch(30% 0.035 262);
+    --accent: oklch(84% 0.12 82);      /* oro */
+    --accent-2: oklch(90% 0.1 85);
+    --accent-ink: oklch(20% 0.04 262);
+    --gold: oklch(84% 0.12 82);
+    --flame-out: oklch(70% 0.19 45);
+    --flame-in: oklch(92% 0.12 90);
+    --glow: oklch(78% 0.1 85 / 0.16);
+    --ray: oklch(88% 0.08 88 / 0.07);
+    --mote: oklch(90% 0.08 88);
+    --wind: oklch(88% 0.04 85 / 0.35);
+    --shadow: 0 40px 80px -30px oklch(6% 0.03 262 / 0.7);
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; overflow-x: clip; }
+body {
+  min-height: 100vh; min-height: 100dvh;
+  background:
+    radial-gradient(90% 55% at 50% -5%, var(--glow), transparent 70%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  display: grid; place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+::selection { background: color-mix(in oklab, var(--accent) 30%, transparent); }
+
+/* Partículas: polvo de luz (claro) o brasas (oscuro) */
+#cielo { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+/* Rayos que bajan desde arriba, solo visibles en claro */
+.luz {
+  position: fixed; inset: 0 0 auto 0; height: 75vh; pointer-events: none; z-index: 0;
+  background: repeating-conic-gradient(from 168deg at 50% -20%, var(--ray) 0deg 3deg, transparent 3deg 9deg);
+  -webkit-mask: radial-gradient(80% 90% at 50% 0%, black 20%, transparent 75%);
+  mask: radial-gradient(80% 90% at 50% 0%, black 20%, transparent 75%);
+  opacity: 0.9;
+}
+
+/* Logo en la esquina superior izquierda: toma el color de la tinta de cada tema */
+.logo {
+  position: fixed; z-index: 2;
+  top: max(18px, env(safe-area-inset-top));
+  left: max(18px, env(safe-area-inset-left));
+  width: 30px; height: 80px;
+  background: var(--ink);
+  opacity: 0.85;
+  -webkit-mask: url("../icons/logo-sion.svg") center / contain no-repeat;
+  mask: url("../icons/logo-sion.svg") center / contain no-repeat;
+  pointer-events: none;
+}
+@media (min-width: 40rem) { .logo { width: 36px; height: 96px; top: max(28px, env(safe-area-inset-top)); left: max(28px, env(safe-area-inset-left)); } }
+
+main {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 520px;
+  display: grid; justify-items: center; gap: 20px;
+}
+
+.fecha {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.fecha::first-letter { text-transform: uppercase; }
+
+/* ---------- La tarjeta es el botón ---------- */
+.tarjeta {
+  position: relative; overflow: hidden;
+  width: 100%; min-height: 21rem;
+  display: grid; place-items: center; align-content: center; gap: 22px;
+  padding: 56px 32px 44px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--ink); font: inherit; text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 220ms var(--ease), transform 120ms var(--ease);
+}
+.tarjeta:hover { border-color: var(--gold); }
+.tarjeta:active { transform: scale(0.985); }
+.tarjeta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; transition: none; }
+.tarjeta:disabled { cursor: default; transform: none; border-color: var(--rule); }
+
+.frase {
+  display: block; max-width: 20ch; min-width: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 1.2rem + 2.6vw, 2.5rem);
+  line-height: 1.2; letter-spacing: -0.01em;
+  color: var(--ink);
+  overflow-wrap: break-word; text-wrap: balance;
+}
+
+.frase.larga { font-size: clamp(1.35rem, 1.1rem + 1.4vw, 1.85rem); max-width: 24ch; line-height: 1.28; }
+.frase.muy-larga { font-size: clamp(1.15rem, 1rem + 0.9vw, 1.5rem); max-width: 30ch; line-height: 1.35; }
+.cita {
+  display: block; max-width: 30ch;
+  margin-top: -8px;
+  color: var(--muted);
+  font-size: 0.95rem; font-style: italic;
+}
+.revelando .cita { animation: aparecer 800ms 600ms var(--ease) both; }
+
+.pista {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 26px;
+  border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  font-weight: 600; font-size: 1.02rem; white-space: nowrap;
+  transition: background-color 120ms var(--ease);
+}
+.tarjeta:hover .pista { background: var(--accent-2); }
+.tarjeta:disabled .pista {
+  background: transparent; color: var(--muted);
+  min-height: 0; padding: 0; font-weight: 400; font-size: 0.92rem;
+}
+
+/* ---------- Lengua de fuego ---------- */
+.llama {
+  display: none;
+  width: 40px; height: 56px;
+  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--flame-out) 55%, transparent));
+}
+.llama svg { display: block; overflow: visible; transform-origin: 50% 100%; }
+.llama-fuera { fill: var(--flame-out); }
+.llama-dentro { fill: var(--flame-in); }
+.usada .llama { display: block; }
+.usada .llama svg { animation: titilar 2.6s ease-in-out infinite; }
+
+/* Al pulsar: la llama desciende y se posa */
+.revelando .llama { animation: descender 1100ms var(--ease) both; }
+.revelando .frase { animation: aparecer 900ms 450ms var(--ease) both; }
+.revelando .pista { animation: aparecer 700ms 700ms var(--ease) both; }
+
+@keyframes titilar {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  25% { transform: scale(0.96, 1.06) rotate(-2deg); }
+  50% { transform: scale(1.03, 0.97) rotate(1.5deg); }
+  75% { transform: scale(0.98, 1.04) rotate(-1deg); }
+}
+@keyframes descender {
+  0% { opacity: 0; transform: translateY(-90px) scale(0.6); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Viento recio ---------- */
+.viento { position: absolute; inset: 0; pointer-events: none; }
+.viento i {
+  position: absolute; left: 0; height: 1.5px; width: 45%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--wind), transparent);
+  opacity: 0;
+  transform: translateX(-110%);
+}
+.viento i:nth-child(1) { top: 18%; }
+.viento i:nth-child(2) { top: 31%; width: 60%; }
+.viento i:nth-child(3) { top: 46%; width: 38%; }
+.viento i:nth-child(4) { top: 58%; width: 55%; }
+.viento i:nth-child(5) { top: 71%; width: 42%; }
+.viento i:nth-child(6) { top: 84%; width: 50%; }
+.soplando .viento i { animation: soplo 900ms cubic-bezier(0.4, 0, 0.2, 1) both; }
+.soplando .viento i:nth-child(2) { animation-delay: 60ms; }
+.soplando .viento i:nth-child(3) { animation-delay: 140ms; }
+.soplando .viento i:nth-child(4) { animation-delay: 30ms; }
+.soplando .viento i:nth-child(5) { animation-delay: 190ms; }
+.soplando .viento i:nth-child(6) { animation-delay: 100ms; }
+@keyframes soplo {
+  0% { opacity: 0; transform: translateX(-110%); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(260%); }
+}
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .usada .llama svg, .revelando .llama, .revelando .frase, .revelando .cita, .revelando .pista, .soplando .viento i { animation: none; }
+}
